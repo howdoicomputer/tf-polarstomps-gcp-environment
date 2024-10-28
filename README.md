@@ -2,7 +2,7 @@
 
 ## About
 
-This Terraform module is used to provision an opinionated GCP environment for the Polarstomps web application. It deploys all resources in **us-west1**.
+This Terraform module is used to provision an opinionated GCP environment for the Polarstomps web application. It deploys all resources in **us-west1** by default.
 
 It will deploy:
 
