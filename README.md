@@ -12,13 +12,13 @@ It will deploy:
 * A [Cloud Router](https://cloud.google.com/network-connectivity/docs/router/concepts/overview) and a [Cloud Nat](https://cloud.google.com/nat/docs/overview) in order to enable routing to a private GKE cluster
 * A GKE/Kubernetes autopilot cluster that has private nodes and a public control plane endpoint (that is locked down to that same "home" IP address)
 
-The philosphy of the module is that it enforces a set of hypothetical standards for an organization - i.e, the Polarstomps organization. It assumes that environments would be relatively homogenous and so works to enforce a set of defaults and minimize the need for creating wrapper modules to set inputs.
+The philosphy of this module is that it enforces a set of hypothetical standards for an organization - i.e, the Polarstomps organization. It assumes that environments would be relatively homogenous and so works to enforce a set of defaults in order to minimize the need for creating wrapper modules to set inputs.
 
 However, it also gives you an escape hatch for customizing the underlying environment. For the average instantiation, the only real inputs are an environment string (dev/stage/prod) and subnet cidrs.
 
 ### One Cluster One Environment
 
-This module defines a logical environment as "one cluster in one VPC." This is fairly simplistic but so is the problem. If you need multiple clusters per environment (say you want a cluster solely dedicated to processing HIPAA or PII data) then this module isn't for you. It would need to be refactored so that the GKE cluster is its own module. For the Polarstomps web application, centralizing everything into one module provides simplicity.
+This module defines a logical environment as "one GKE cluster in one VPC." This is fairly simplistic but so are the needs of the Polarstomps web application. If you need multiple clusters per environment (say you want a cluster solely dedicated to processing HIPAA or PII data) then this module isn't for you. It would need to be refactored so that the GKE cluster is its own module. For now, centralizing the GKE cluster and the VPC into a single module helps with code maintainability.
 
 ### Network Layout
 
@@ -45,7 +45,7 @@ argocd login --core
 argocd admin initial-password -n argocd
 ```
 
-Port forward into the ArgoCD UI `kubectl port-forward svc/argocd-server -n argocd 8080:443` and then use the password generated from the above shell to look at the UI.
+Then port forward into the ArgoCD UI with `kubectl port-forward svc/argocd-server -n argocd 8080:443` and then use the password generated from the above shell to get to the good stuff.
 
 ### Customization and Usage
 
@@ -74,7 +74,7 @@ Note, this module uses `coalesce` and `coalescelist` in order to make the tradeo
 
 Generally, this means that any list of objects has a default defined in the `locals` block of `main.tf` rather than the defaults of `variables.tf`.
 
-#### Customizing Firewall Rules
+#### Customizing Firewall Rules Example
 
 ``` terraform
 module "environment" {
@@ -116,7 +116,7 @@ module "environment" {
 }
 ```
 
-#### Customizing VPC Subnets
+#### Customizing VPC Subnets Example
 
 ``` terraform
 module "environment" {
@@ -147,7 +147,7 @@ module "environment" {
 }
 ```
 
-#### Customizing VPC routes
+#### Customizing VPC Routes Example
 
 ``` terraform
 module "environment" {
@@ -162,6 +162,10 @@ module "environment" {
   }]
 }
 ```
+
+#### Contact
+
+No Terraform module is perfect. Terraform, as a language, is frought with peril. If you need help setting this up then don't hesitate to ping me.
 
 #### Testing
 
