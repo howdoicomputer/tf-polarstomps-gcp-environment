@@ -20,6 +20,18 @@ However, it also gives you an escape hatch for customizing the underlying enviro
 
 This module defines a logical environment as "one GKE cluster in one VPC." This is fairly simplistic but so are the needs of the Polarstomps web application. If you need multiple clusters per environment (say you want a cluster solely dedicated to processing HIPAA or PII data) then this module isn't for you. It would need to be refactored so that the GKE cluster is its own module. For now, centralizing the GKE cluster and the VPC into a single module helps with code maintainability.
 
+### Autopilot vs Standard GKE
+
+Autopilot is pretty neat. It is the recommended way of deploying Kubernetes in GCP now and, honestly, simplifies administration quite a bit. This means there are no node pools managed by this module.
+
+Autopilot knows which worker nodes (and GPUs) are needed by your application by looking at the `nodeSelector` for a manifest and then provisioning the right type of node for your workload.
+
+If you need a standard GKE cluster then this module is not for you.
+
+Some use cases for a standard GKE cluster:
+
+* Your one true passion in life is to manage node pools for a Kubernetes cluster
+
 ### Network Layout
 
 By default, this module creates the below diagram:
