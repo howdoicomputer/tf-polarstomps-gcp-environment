@@ -63,13 +63,13 @@ Then port forward into the ArgoCD UI with `kubectl port-forward svc/argocd-serve
 
 An example of using this module is in the [polarstomps-infra-gcp]() repository as its used to deploy the dev and prod environments.
 
-A very basic usage looks like this:
+The most basic usage looks like this:
 
 ``` terraform
 module "prod" {
-  source              = "."
+  source              = "github.com/howdoicomputer/tf-polarstomps-gcp-environment?ref=v1"
   env                 = "prod"
-  project_id          = "foobar"
+  project_id          = "REPLACE_ME"
   public_subnet_cidr  = "10.10.40.0/26"
   private_subnet_cidr = "10.10.50.0/26"
   control_plane_cidr  = "10.10.60.0/28"
