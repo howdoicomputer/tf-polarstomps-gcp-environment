@@ -126,7 +126,7 @@ module "environment" {
   #
   # Or, really, the subnet name that you want the GKE worker nodes to be
   # created in needs to match the private subnet name. The worker pools
-  # have to live somewhere and you get to choose where.
+  # have to live somewhere and you get to choose where. You caregiver you.
   #
   gke_node_subnet_name = "private"
   
