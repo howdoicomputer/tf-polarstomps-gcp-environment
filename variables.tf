@@ -156,6 +156,7 @@ variable "gke_svc_range_cidr" {
 variable "gke_node_subnet_name" {
   description = "The subnet name for nodes created by GKE autopilot"
   type        = string
+  default     = ""
 }
 
 variable "gke_release_channel" {
