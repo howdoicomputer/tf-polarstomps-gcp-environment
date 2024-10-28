@@ -70,7 +70,7 @@ module "prod" {
 }
 ```
 
-Note, this module uses `coalesce` and `coalescelist` in order to make the tradeoff of DRY module instantiation with slightly obscured defaults.
+Note, this module makes copious use of the `coalesce` and `coalescelist` functions in order to make the tradeoff of DRY module instantiation with slightly obscured defaults.
 
 Generally, this means that any list of objects has a default defined in the `locals` block of `main.tf` rather than the defaults of `variables.tf`.
 
