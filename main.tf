@@ -13,37 +13,41 @@ locals {
     ]
   )
 
-  vpc_firewall_rules = coalescelist(
-    var.vpc_firewall_rules,
-    [{
-      name               = "infra-${var.env}-allow-ssh-ingress"
-      description        = "let me innnnnnn"
-      direction          = "INGRESS"
-      priority           = 0
-      destination_ranges = [var.vpc_public_subnet_cidr]
-      source_ranges      = [var.my_ip_address]
+  gke_node_subnet_name = coalesce(var.gke_node_subnet_name, local.vpc_private_subnet_name)
 
-      allow = [{
-        protocol = "tcp"
-        ports    = ["22"]
-      }]
+  my_ip_ingress_rule = {
+    name               = "infra-${var.env}-allow-ssh-ingress"
+    description        = "let me innnnnnn"
+    direction          = "INGRESS"
+    priority           = 0
+    destination_ranges = [var.vpc_public_subnet_cidr]
+    source_ranges      = [var.my_ip_address]
+
+    allow = [{
+      protocol = "tcp"
+      ports    = ["22"]
     }]
-  )
+  }
 
-  vpc_subnets = [
-    {
-      subnet_name   = local.vpc_public_subnet_name
-      subnet_ip     = var.vpc_public_subnet_cidr
-      subnet_region = var.region
-      description   = "Public internet facing services"
-    },
-    {
-      subnet_name   = local.vpc_private_subnet_name
-      subnet_ip     = var.vpc_private_subnet_cidr
-      subnet_region = var.region
-      description   = "Internal services"
-    }
-  ]
+  vpc_firewall_rules = var.vpc_enable_my_ip_ingress_rule ? concat(var.vpc_firewall_rules, [local.my_ip_ingress_rule]) : var.vpc_firewall_rules
+
+  vpc_subnets = coalescelist(
+    var.vpc_subnets,
+    [
+      {
+        subnet_name   = local.vpc_public_subnet_name
+        subnet_ip     = var.vpc_public_subnet_cidr
+        subnet_region = var.region
+        description   = "Public internet facing services"
+      },
+      {
+        subnet_name   = local.vpc_private_subnet_name
+        subnet_ip     = var.vpc_private_subnet_cidr
+        subnet_region = var.region
+        description   = "Internal services"
+      }
+    ]
+  )
 
   vpc_private_subnet_secondary_ranges = coalescelist(
     var.vpc_private_subnet_secondary_ranges,
@@ -98,7 +102,7 @@ module "subnets" {
   subnets      = local.vpc_subnets
 
   secondary_ranges = {
-    (local.vpc_private_subnet_name) = local.vpc_private_subnet_secondary_ranges
+    (local.gke_node_subnet_name) = local.vpc_private_subnet_secondary_ranges
   }
 }
 
@@ -160,7 +164,7 @@ module "gke_cluster" {
 
   name                            = local.gke_cluster_name
   network                         = module.vpc.network_name
-  subnetwork                      = local.vpc_private_subnet_name
+  subnetwork                      = local.gke_node_subnet_name
   region                          = var.region
   master_ipv4_cidr_block          = var.gke_control_plane_cidr
   ip_range_services               = local.svc_range_name
