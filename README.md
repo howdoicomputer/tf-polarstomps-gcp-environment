@@ -116,7 +116,7 @@ module "environment" {
       description        = "foobar"
       direction          = "INGRESS"
       priority           = 0
-      destination_ranges = ["0.0.0.0/16"]
+      destination_ranges = ["0.0.0.0/26"]
       source_ranges      = ["1.1.1.1/32"]
       
       allow = [{
@@ -145,13 +145,13 @@ module "environment" {
   vpc_subnets = [
     {
       subnet_name   = "public"
-      subnet_ip     = "10.0.10.0/16"
+      subnet_ip     = "10.0.10.0/26"
       subnet_region = "us-west1"
       description   = "foobar"
     },
     {
       subnet_name   = "private"
-      subnet_ip     = "10.0.20.0/16"
+      subnet_ip     = "10.0.20.0/26"
       subnet_region = "us-west1"
       description   = "foobar"
     }
@@ -181,9 +181,17 @@ No Terraform module is perfect. Terraform, as a language, is frought with peril.
 
 #### Testing
 
-This module was tested by instantiating different configurations in the Polarstomps GCP infra repository and then running `terragrunt apply` and seeing if it produced functional infrastructure.
+This module uses [Terratest](https://terratest.gruntwork.io/). The example configurations it tests are in `/examples`.
 
-TODO: Set up [Terratest](https://terratest.gruntwork.io/).
+``` terraform
+export TF_VAR_MY_IP_ADDRESS=foobar/32
+export TF_VAR_PROJECT_ID=pid
+
+cd ./test
+go test
+```
+
+In order to automate the above environment variables, feel free to use an `.envrc` file. An example is provided in the root of this repo.
 
 # Terraform-docs
 
